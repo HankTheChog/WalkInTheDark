@@ -1,0 +1,1 @@
+Press L to toggle light. Light will fade gradually.

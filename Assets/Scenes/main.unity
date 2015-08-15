@@ -380,5 +380,5 @@ MonoBehaviour:
   OverTimeEx: 3
   StartAtEx: 1
   StopAtEx: 0
-  TickForLight: 0
+  TickForLight: 1
   TickForColor: 0
