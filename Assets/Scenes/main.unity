@@ -314,6 +314,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorPrefab: {fileID: 438486, guid: a2b1cf219f8163d4f9dd72aa52030566, type: 2}
   wallPrefab: {fileID: 490920, guid: fa478946944d3094aa05b52bdf9d5682, type: 2}
+  numTilesX: 20
+  numTilesZ: 10
 --- !u!1 &645606812
 GameObject:
   m_ObjectHideFlags: 0

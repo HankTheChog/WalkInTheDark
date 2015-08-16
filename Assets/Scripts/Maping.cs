@@ -20,10 +20,15 @@ public class Maping : MonoBehaviour {
 
 	public Transform floorPrefab;
 	public Transform wallPrefab;
+		
+	[SerializeField]
+	int numTilesX;
+	[SerializeField]
+	int numTilesZ;
 
 	
 	void Start () {
-		var map = EasyMap(15, 10);
+		var map = EasyMap(numTilesX, numTilesZ);
 
 		InstantiateMap(map);
 	}
