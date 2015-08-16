@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class LerpMap : MonoBehaviour {
-	bool active = true;
+	bool functional = false;
 	public Light lightEx;
 	public SpriteRenderer colorEx;
 	public float OverTimeEx;
@@ -13,15 +13,21 @@ public class LerpMap : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// Start lerping (if active)
-		SetCoroutines(active); // note that this will set monitored attributes to StartAtEx, even if !active
+		// Maybe start lerping?
+		SetDimming(functional); // note that this will set monitored attributes to StartAtEx, even if !active
+	}
+
+	public bool lightsOn {
+		get {
+			return !functional;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		// If L key pressed, toggle activation
 		if (Input.GetKeyDown(KeyCode.L))
-			SetCoroutines(!active);			
+			SetDimming(!functional);			
 	}
 
 	IEnumerator LerpLight(Light lighty,float overTime,float StartAt, float StopAt){
@@ -57,7 +63,7 @@ public class LerpMap : MonoBehaviour {
 
 	/// <param name="start">If true, restarts the script, else halts it and returns monitored attributes (light intensity and/or renderer color)
 	/// to initial value (StartAtEx).</param>
-	void SetCoroutines(bool start) {
+	public void SetDimming(bool start) {
 		if (!start) {
 			// Stop lerping and reset lerped attributes to starting values
 			StopAllCoroutines();
@@ -74,6 +80,6 @@ public class LerpMap : MonoBehaviour {
 			}
 		}
 		
-		active = start;
+		functional = start;
 	}
 }
