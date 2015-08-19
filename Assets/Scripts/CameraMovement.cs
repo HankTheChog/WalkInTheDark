@@ -13,7 +13,7 @@ namespace Assets.Scripts
 
         private void Awake()
         {
-            player = GameObject.FindGameObjectWithTag("Player").transform;
+          /*  player = GameObject.FindGameObjectWithTag("Player").transform;
 
             if (!player)
             {
@@ -21,14 +21,14 @@ namespace Assets.Scripts
                 return;
             }
 
-            basicMovement = player.GetComponent<BasicMovement>();
+            basicMovement = player.GetComponent<BasicMovement>();*/
         }
         private void LateUpdate()
         {
-            if (!player || !basicMovement.OnGround())
+            /*if (!player || !basicMovement.OnGround())
                 return;
 
             transform.position = Vector3.Lerp(transform.position, new Vector3(player.position.x, transform.position.y, player.position.z), speed * Time.deltaTime);
-        }
+        */}
     }
 }

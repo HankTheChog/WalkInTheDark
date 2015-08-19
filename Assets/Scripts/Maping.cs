@@ -33,14 +33,87 @@ public class Maping : MonoBehaviour {
 		InstantiateMap(map);
 	}
 
+	public static void MoveUp(int col, TileType[,] map)
+	{
+
+		int row = map.GetLength(0)-1;
+		
+		while (map[row-1, col] != TileType.Floor)
+		{
+			row--;
+		}
+		map[row, col] = TileType.Floor;
+		
+		for (int i = col+1; i < map.GetLength(1); i++)
+		{
+			for (int j = map.GetLength(0)-1; j > 0; j--)
+			{
+				if (map[j-1, i] == TileType.Floor)
+				{
+					map[j, i] = TileType.Floor;
+					map[j - 1, i] = TileType.Wall;
+				}
+			}
+		}
+	}
+
+	public static void MoveRight(int row, TileType[,] map)
+	{
+		int col = map.GetLength(1) - 1;
+		while (map[row, col - 1]!=TileType.Floor)
+		{
+			col--;
+		}
+		map[row,col]=TileType.Floor;
+		
+		for (int i = row+1; i < map.GetLength(0); i++)
+		{
+			for (int j = map.GetLength(1)-1; j > 0; j--)
+			{
+				if (map[i, j - 1] == TileType.Floor)
+				{
+					map[i, j] = TileType.Floor;
+					map[i,j - 1] = TileType.Wall;
+				}
+			}
+		}
+	}
+	/// <summary>
+	/// finds the greatest common divisor of two integers.
+	/// helpfull for better map generating
+	/// </summary>
+	public static int FindGCD(int x, int y)
+	{
+		int Max = Math.Max(x, y);
+		int Min = Math.Min(x, y);
+		int Remainder = Max;
+		while (Min!=0)
+		{
+			while (Remainder >= Min)
+			{
+				Remainder =Remainder- Min;
+			}
+			Max = Min;
+			Min = Remainder;
+			Remainder = Max;
+		}
+		return Remainder;
+	}
+
 	// building an easy map - only up and right turns. EasyMap gets a two dimensional array  
 	// and builds an easy map in it. the number 0 represents a wall (or solid matter)
 	// and the number 1 represents a room (the path, a hallway, air, what ever you want) 
 	static MapDescriptor EasyMap(int sizeX, int sizeZ)
 	{
 		System.Random rng = new System.Random();
-
 		var tiles = new TileType[sizeX, sizeZ];
+
+		//finding the greatest common divisor of the lengths of the rectangle.
+		// this gives a better way of randomizing tiles, instead in a ratio of 1:1
+		// the ratio depends on the size of the rectangle (for a 10 by 20 rectangle
+		// the randomizing ratio for up and right will be 1:2)
+		int gcd = FindGCD(tiles.GetLength(1), tiles.GetLength(0));
+		int ChanceNum = (tiles.GetLength(1) / gcd) + (tiles.GetLength(0) / gcd);
 
 		// setting the whole tiles to 0, everything is a wall
 		for (int i = 0; i < tiles.GetLength(0); i++) {
@@ -55,28 +128,59 @@ public class Maping : MonoBehaviour {
 		//indexes to the last tile that was changed
 		int CurrentRow = 0; 
 		int CurrentCol = 0;
-
+		int num;
 		// the pathway can be as long as the sum of the number of columns
 		// and rows in the array minus 1
 		for (int i = 0; i < (tiles.GetLength(0) + tiles.GetLength(1)); i++)
 		{
 			if (CurrentCol < tiles.GetLength(1) - 1 && CurrentRow < tiles.GetLength(0) - 1)
 			{
-				//getting a random number (0 or 1), if you get 0 the tile on the right 
-				//becomes a room, if you get 1 the above becomes a room. the indexes 
-				//changes acording to the last tile that was modified
-				int num = rng.Next(0, 2);
-				if (num == 0)
+				//getting a random number between 0 and the chance num, so the odds 
+				//of getting an up or right turn will be adjusted by the size of the rectangle
+				 num = rng.Next(0, ChanceNum);
+
+
+				if (num < Math.Min((tiles.GetLength(1) / gcd), (tiles.GetLength(0) / gcd)))
 				{
-					CurrentCol++;
-					tiles[CurrentRow, CurrentCol] = TileType.Floor;
+					if(tiles.GetLength(1)>tiles.GetLength(0)){
+						CurrentRow++;
+						tiles[CurrentRow, CurrentCol] = TileType.Floor;
+					
+					}
+					else
+					{
+						CurrentCol++;
+						tiles[CurrentRow, CurrentCol] = TileType.Floor;
+					}
 				}
-				if (num == 1)
-				{
-					CurrentRow++;
-					tiles[CurrentRow, CurrentCol] = TileType.Floor;
+				else{
+
+					if(tiles.GetLength(1)>tiles.GetLength(0))
+					{
+						CurrentCol++;
+						tiles[CurrentRow, CurrentCol] = TileType.Floor;
+						
+					}else
+					{
+						CurrentRow++;
+						tiles[CurrentRow, CurrentCol] = TileType.Floor;
+					}
 				}
 			}
+		}
+
+		while (CurrentRow != tiles.GetLength(0) - 1)
+		{
+			
+			num = rng.Next(0, tiles.GetLength(1));
+			MoveUp(num, tiles);
+			CurrentRow++;
+		}
+		while (CurrentCol != tiles.GetLength(1) - 1)
+		{
+			num = rng.Next(0, tiles.GetLength(0));
+			MoveRight(num, tiles);
+			CurrentCol++;
 		}
 
 		var result = new MapDescriptor();
