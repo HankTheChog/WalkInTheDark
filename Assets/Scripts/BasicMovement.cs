@@ -14,6 +14,10 @@ namespace Assets
 		[SerializeField]
 		private float gravity;
 
+		///<summary>The size of the player mesh. Used for a redundant raycasting kludge to workaround extraneous physics. TEMP and ugly.</summary>
+		[SerializeField]
+		float size;
+
 		/// <summary>y-value of rock bottom. Game restarts if player falls this low.</summary>
 		[SerializeField]
 		float lowestPoint;
@@ -61,9 +65,6 @@ namespace Assets
 		}
 
         /// <summary>Checks if the Player on the Floor.</summary>
-        /// <warning>Only checks what's under the center of the Player object, will return false if we're straddling a gap between tiles. This should hypothetically cause issues. The slower the player,
-        /// the greater the chance of being immobilized.</warning>
-        /// <todo>Replace with something more robust (OnCollisionStay() or multiple raycasts), or drop physics altogether</todo>
         public bool OnGround()
         {
 			return GetTile() != null;
@@ -77,8 +78,10 @@ namespace Assets
 		/// <summary>Returns the tile we're on, null if in midair.</summary>
 		GameObject GetTile() {
 			var hit = new RaycastHit();
-			Debug.DrawRay(transform.position, Vector3.down); // Only for debug
-			if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("Floor"))) // assume anything in the floor layer is a tile
+			/*Debug.DrawRay(transform.position, Vector3.down); // Only for debug
+			if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.4f, LayerMask.GetMask("Floor"))) // assume anything in the floor layer is a tile
+				return hit.collider.gameObject;*/
+			if (Physics.SphereCast(transform.position, size / 2, Vector3.down, out hit, 0.2f, LayerMask.GetMask("Floor"))) // assume anything in the floor layer is a tile
 				return hit.collider.gameObject;
 
 			return null;
