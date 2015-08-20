@@ -1,7 +1,17 @@
-Press L to toggle light. Light will fade gradually.
+RUNTIME INTERFACE
+L - use torch
+R - generate new map
+T - switch between clock and timer
 
-To lock the camera, disable the movement script on Main Camera.
+CHANGING SCENE SETTINGS
+To set the light fadeout speed, tweak "Over Time Ex" on the Directional Light object.
+To set the time for the light to start fading out if the player just sits there, change "Time Until Initial Fade" on the Singletons object.
 
-To resize the map, change the numTiles parameters on the Maping script in the Singletons object
+To set the countdown duration on the timer, change "Countdown Duration" on the Singletons object.
 
-Note that this project has a custom script execution order (Edit -> Project Settings -> Script Execution Order)
+To change map size (for future maps), change "Num Tiles X" and "Num Tiles Y" on the Singletons object.
+
+To prevent walls from hiding bits of the player cube (allowing players to figure out where some walls are), change "Projection" on Main Camera to orthographic.
+
+
+Note that this project has a custom script execution order (Edit -> Project Settings -> Script Execution Order).

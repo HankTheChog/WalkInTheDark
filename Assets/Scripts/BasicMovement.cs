@@ -6,7 +6,7 @@ namespace Assets
     public class BasicMovement : MonoBehaviour
     {
 		/// <note>Only guaranteed meaningful if using grid movement.</note>
-		private Vector3 currentTile;
+		public Vector3 currentTile;
 
 		///<summary>If true, we are FUCKING FLYING, man!</summary>
 		bool falling = true;
@@ -26,7 +26,7 @@ namespace Assets
 
         /// <summary>Speed, if using physics-based movement.</summary>
         [SerializeField]
-        private float speed;
+        private float physicsSpeed;
 				        
         [SerializeField]
         private Animation screenFade;
@@ -60,10 +60,10 @@ namespace Assets
 				screenFade.Play("UnFadeScreen");
 		}
 
-        /// <summary>
-        /// The function checks if the Player on the Floor.
-        /// By the way, Make sure the Ground Game Object contains "Floor" layer.
-        /// </summary>
+        /// <summary>Checks if the Player on the Floor.</summary>
+        /// <warning>Only checks what's under the center of the Player object, will return false if we're straddling a gap between tiles. This should hypothetically cause issues. The slower the player,
+        /// the greater the chance of being immobilized.</warning>
+        /// <todo>Replace with something more robust (OnCollisionStay() or multiple raycasts), or drop physics altogether</todo>
         public bool OnGround()
         {
 			return GetTile() != null;
@@ -84,8 +84,10 @@ namespace Assets
 			return null;
 		}
 
-        private void FixedUpdate()
+        private void Update()
         {
+            // Note that physics behavior generally belongs in FixedUpdate(), and input response in Update(), but since we aren't presently using the physics for anything but falling, I've elected to stick everything
+            // in Update()
             Move();
 
 			// Have we hit rock bottom?
@@ -98,7 +100,7 @@ namespace Assets
             {
 				// We're in midair
 				falling = true;
-                moveDirection.y -= gravity * Time.fixedDeltaTime;
+                moveDirection.y -= gravity * Time.deltaTime;
                 return;
             }
 
@@ -111,6 +113,9 @@ namespace Assets
 				rigidbody.velocity = Vector3.zero;
 				rigidbody.angularVelocity = Vector3.zero;
 				currentTile = transform.position;
+
+				// Possible kludge: also restart the gameclock. ASSUMPTION: no falling unless we're doing the "intro cinematic" or falling off the edge of the map
+				Game.instance.StartClock();
 			}
 
             // To make sure we restart the Player on the ground.
@@ -125,16 +130,16 @@ namespace Assets
 			} else {
 				// Grid-based movement. Check inputs directly, for minimal latency. TODO: implementation that recognizes custom keymaps
 				// Note that we only recognize one concurrent directional key. No diagonals etc.
-				if (Input.GetKey(KeyCode.LeftArrow)) {
+				if (Input.GetKeyDown(KeyCode.LeftArrow)) {
 					moveDirection = new Vector3(-1, 0, 0);
 				}
-				else if (Input.GetKey(KeyCode.UpArrow)) {
+				else if (Input.GetKeyDown(KeyCode.UpArrow)) {
 					moveDirection = new Vector3(0, 0, 1);
 				}
-				else if (Input.GetKey(KeyCode.RightArrow)) {
+				else if (Input.GetKeyDown(KeyCode.RightArrow)) {
 					moveDirection = new Vector3(1, 0, 0);
 				}
-				else if (Input.GetKey(KeyCode.DownArrow)) {
+				else if (Input.GetKeyDown(KeyCode.DownArrow)) {
 					moveDirection = new Vector3(0, 0, -1);
 				} else
 					moveDirection = Vector3.zero;
@@ -148,7 +153,7 @@ namespace Assets
         {
 			if (falling || !useGrid) {
 				// Physics-based movement
-            	rigidbody.velocity = new Vector3(moveDirection.x * speed, moveDirection.y, moveDirection.z * speed);
+            	rigidbody.velocity = new Vector3(moveDirection.x * physicsSpeed, moveDirection.y, moveDirection.z * physicsSpeed);
 				return;
 			}
 
@@ -156,7 +161,7 @@ namespace Assets
 			transform.eulerAngles = Vector3.zero; // Keep orientation fixed
 			if (moveStartTime >= 0) {
 				// Continue current move
-				var ratio = (Time.fixedTime - moveStartTime) / tileMoveTime;
+				var ratio = (Time.time - moveStartTime) / tileMoveTime;
 				if (ratio >= 1f) {
 					// Arrived
 					transform.position = nextTile;
@@ -171,7 +176,7 @@ namespace Assets
 				if (moveDirection != Vector3.zero) {
 					B.Assert(moveDirection.sqrMagnitude == 1f);
 					nextTile = transform.position + new Vector3(moveDirection.x, 0, moveDirection.z) * Game.instance.tileSize;
-					moveStartTime = Time.fixedTime;
+					moveStartTime = Time.time;
 
 					// Report start of new move to game
 					Game.instance.OnStartMove();
@@ -186,7 +191,13 @@ namespace Assets
         private void OnCollisionEnter(Collision col)
         {
             if (col.gameObject.CompareTag("Obstacle"))
-				Game.instance.Restart();						           
+				Game.instance.Die();						           
         }
+
+		private void OnTriggerEnter(Collider trigger)
+		{
+			if (trigger.gameObject.CompareTag("Goal"))
+				Game.instance.Win();						           
+		}
     }
 }

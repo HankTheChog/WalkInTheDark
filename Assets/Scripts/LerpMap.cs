@@ -22,13 +22,6 @@ public class LerpMap : MonoBehaviour {
 			return !functional;
 		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		// If L key pressed, toggle activation
-		if (Input.GetKeyDown(KeyCode.L))
-			SetDimming(!functional);			
-	}
 
 	IEnumerator LerpLight(Light lighty,float overTime,float StartAt, float StopAt){
 		float startTime = Time.time;

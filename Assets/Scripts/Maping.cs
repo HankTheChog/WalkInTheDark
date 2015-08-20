@@ -14,12 +14,19 @@ public class MapDescriptor {
 
 	public int startX;
 	public int startZ;
+
+	public int endX;
+	public int endZ;
 }
 
 public class Maping : MonoBehaviour {
+	[SerializeField]
+	Transform floorPrefab;
 
-	public Transform floorPrefab;
-	public Transform wallPrefab;
+	GameObject goal;
+
+	[SerializeField]
+	Transform wallPrefab;
 		
 	[SerializeField]
 	int numTilesX;
@@ -28,12 +35,26 @@ public class Maping : MonoBehaviour {
 
 	
 	void Start () {
-		var map = EasyMap(numTilesX, numTilesZ);
-
-		InstantiateMap(map);
+		// Find goal in scene
+		goal = GameObject.Find("Goal");
+		// Create map
+		GenerateMap();
 	}
 
-	public static void MoveUp(int col, TileType[,] map)
+	/// <summary>Generates a map and returns its descriptor.</summary>
+	public MapDescriptor GenerateMap() { 
+		// Destroy any extant map
+		var mapContainer = GameObject.Find("Map").transform;
+		foreach (Transform child in mapContainer)
+			Destroy(child.gameObject); // Might be faster to just destroy and recreate the empty mapContainer
+
+		// Create new map
+		var result = EasyMap(numTilesX, numTilesZ);
+		InstantiateMap(result);
+		return result;
+	}
+
+	static void MoveUp(int col, TileType[,] map)
 	{
 
 		int row = map.GetLength(0)-1;
@@ -57,7 +78,7 @@ public class Maping : MonoBehaviour {
 		}
 	}
 
-	public static void MoveRight(int row, TileType[,] map)
+	static void MoveRight(int row, TileType[,] map)
 	{
 		int col = map.GetLength(1) - 1;
 		while (map[row, col - 1]!=TileType.Floor)
@@ -82,7 +103,7 @@ public class Maping : MonoBehaviour {
 	/// finds the greatest common divisor of two integers.
 	/// helpfull for better map generating
 	/// </summary>
-	public static int FindGCD(int x, int y)
+	static int FindGCD(int x, int y)
 	{
 		int Max = Math.Max(x, y);
 		int Min = Math.Min(x, y);
@@ -185,8 +206,11 @@ public class Maping : MonoBehaviour {
 
 		var result = new MapDescriptor();
 		result.tiles = tiles;
+		// Simple paths always start at the bottom left, end at the top right
 		result.startX = 0;
 		result.startZ = 0;
+		result.endX = sizeX;
+		result.endZ = sizeZ;
 
 		return result;
 	}
@@ -213,6 +237,9 @@ public class Maping : MonoBehaviour {
 				tile.parent = mapContainer;
 			}
 		}
+
+		// Place goal at end
+		goal.transform.position = position + new Vector3(tiles.GetLength(0) - 1, 0, tiles.GetLength(1) - 1) * tileSize;
 
 		// TEMP: place the player at the start position. This is kinda bad encapsulation, and needlessly constrains SEO
 		var playerPos = Game.instance.player.transform.position;
