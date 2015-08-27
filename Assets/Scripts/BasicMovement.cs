@@ -2,7 +2,6 @@
 
 namespace Assets
 {
-    // Created by Ben Ukhanov (8.13.2015)
     public class BasicMovement : MonoBehaviour
     {
 		/// <note>Only guaranteed meaningful if using grid movement.</note>
