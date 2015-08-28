@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11b576be3c34c9441b698157e818924c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 10
 --- !u!1 &42966521
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,7 +445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   timerDuration: 12
-  timeUntilInitialFade: .699999988
+  timeUntilInitialFade: 2
 --- !u!4 &574034713
 Transform:
   m_ObjectHideFlags: 0
@@ -471,8 +471,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorPrefab: {fileID: 438486, guid: a2b1cf219f8163d4f9dd72aa52030566, type: 2}
   wallPrefab: {fileID: 490920, guid: fa478946944d3094aa05b52bdf9d5682, type: 2}
-  numTilesX: 20
-  numTilesZ: 10
+  numTilesX: 40
+  numTilesZ: 30
 --- !u!1 &645606812
 GameObject:
   m_ObjectHideFlags: 0

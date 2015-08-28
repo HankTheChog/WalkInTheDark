@@ -47,6 +47,10 @@ namespace Assets
 		[SerializeField]
 		bool useGrid;
 
+        // If the camera see the Player, So this will be equals to true.
+        [HideInInspector]
+        public bool visibleByCamera;
+
         // Reset the position of the Player.
 		public void Reset()
 		{
@@ -201,5 +205,11 @@ namespace Assets
 			if (trigger.gameObject.CompareTag("Goal"))
 				Game.instance.Win();						           
 		}
+
+        // By camera.
+        private void OnBecameVisible()
+        {
+            visibleByCamera = true;
+        }
     }
 }
