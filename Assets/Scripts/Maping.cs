@@ -13,10 +13,10 @@ public class MapDescriptor {
 	public TileType[,] tiles;
 
 	public int startX;
-	public int startZ;
+	public int startY;
 
 	public int endX;
-	public int endZ;
+	public int endY;
 }
 
 public class Maping : MonoBehaviour {
@@ -26,12 +26,15 @@ public class Maping : MonoBehaviour {
 	GameObject goal;
 
 	[SerializeField]
-	Transform wallPrefab;
+	Transform gridPrefab;
 		
 	[SerializeField]
 	int numTilesX;
 	[SerializeField]
-	int numTilesZ;
+	int numTilesY;
+
+	[SerializeField]
+	Transform wallPrefab;
 
 	
 	void Start () {
@@ -49,7 +52,7 @@ public class Maping : MonoBehaviour {
 			Destroy(child.gameObject); // Might be faster to just destroy and recreate the empty mapContainer
 
 		// Create new map
-		var result = EasyMap(numTilesX, numTilesZ);
+		var result = EasyMap(numTilesX, numTilesY);
 		InstantiateMap(result);
 		return result;
 	}
@@ -124,10 +127,10 @@ public class Maping : MonoBehaviour {
 	// building an easy map - only up and right turns. EasyMap gets a two dimensional array  
 	// and builds an easy map in it. the number 0 represents a wall (or solid matter)
 	// and the number 1 represents a room (the path, a hallway, air, what ever you want) 
-	static MapDescriptor EasyMap(int sizeX, int sizeZ)
+	static MapDescriptor EasyMap(int sizeX, int sizeY)
 	{
 		System.Random rng = new System.Random();
-		var tiles = new TileType[sizeX, sizeZ];
+		var tiles = new TileType[sizeX, sizeY];
 
 		//finding the greatest common divisor of the lengths of the rectangle.
 		// this gives a better way of randomizing tiles, instead in a ratio of 1:1
@@ -208,9 +211,9 @@ public class Maping : MonoBehaviour {
 		result.tiles = tiles;
 		// Simple paths always start at the bottom left, end at the top right
 		result.startX = 0;
-		result.startZ = 0;
+		result.startY = 0;
 		result.endX = sizeX;
-		result.endZ = sizeZ;
+		result.endY = sizeY;
 
 		return result;
 	}
@@ -223,28 +226,39 @@ public class Maping : MonoBehaviour {
 		// Find empty gameobject to keep map in, to keep our scene hierarchy in order
 		var mapContainer = GameObject.Find("Map").transform;
 
-		position -= new Vector3(tiles.GetLength(0), 0, tiles.GetLength(1)) * tileSize * 0.5f;
+		position -= new Vector3(tiles.GetLength(0), tiles.GetLength(1)) * tileSize * 0.5f;
+
+		// TEMP: also make a note of the map bounds, for player movement
+		Game.instance.mapBoundsMin = position;
+		Game.instance.mapBoundsMax = position + new Vector3(tiles.GetLength(0) - 1, tiles.GetLength(1) - 1) * tileSize;
 
 		for (var x = 0; x < tiles.GetLength(0); ++x) {
-			for (var z = 0; z < tiles.GetLength(1); ++z) {
+			for (var y = 0; y < tiles.GetLength(1); ++y) {
+				// Place tile
 				var tileToPlace = wallPrefab;
-				if (tiles[x, z] == TileType.Floor)
+				if (tiles[x, y] == TileType.Floor)
 					tileToPlace = floorPrefab;
 
-				var tilePosition = position + new Vector3(x, 0, z) * tileSize;			
+				var tilePosition = position + new Vector3(x, y) * tileSize;			
 
 				var tile = Instantiate(tileToPlace, tilePosition, Quaternion.identity) as Transform;
 				tile.parent = mapContainer;
+
+				// Also place visualization of grid cell
+				var cell = Instantiate(gridPrefab, tilePosition, Quaternion.identity) as Transform;
+				cell.parent = mapContainer;
 			}
 		}
 
 		// Place goal at end
-		goal.transform.position = position + new Vector3(tiles.GetLength(0) - 1, 0, tiles.GetLength(1) - 1) * tileSize;
+		goal.transform.position = position + new Vector3(tiles.GetLength(0) - 1, tiles.GetLength(1) - 1) * tileSize;
 
 		// TEMP: place the player at the start position. This is kinda bad encapsulation, and needlessly constrains SEO
 		var playerPos = Game.instance.player.transform.position;
-		playerPos = position + new Vector3(descriptor.startX * tileSize, playerPos.y, descriptor.startZ * tileSize);
+		playerPos = position + new Vector3(descriptor.startX * tileSize, descriptor.startY * tileSize);
 		Game.instance.player.transform.position = playerPos;
+		Game.instance.player.startPosition = playerPos;
+		Game.instance.player.Reset(); // why is this necessary?
 
         Assets.Scripts.Enemy.Instance.Initiate(playerPos);
 	}

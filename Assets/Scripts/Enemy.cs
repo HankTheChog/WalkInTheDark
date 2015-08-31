@@ -3,71 +3,54 @@ using System.Collections;
 
 namespace Assets.Scripts
 {
-    class Enemy : MonoBehaviour
+    class Enemy : PathFollower
     {
         public static Enemy Instance;
 
-        // Time.
-        [SerializeField]
-        private float speed;
+		[SerializeField]
+		private float spawnTime;		        
 
         [HideInInspector]
         public bool gameStarted;
 
         private Vector3 firstPosition;
 
+		public void Start() {
+			// Just shadow the superclass method to prevent it from running
+		}
+
         public void Initiate(Vector3 pos)
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-
+        {            
             firstPosition = pos;
-            transform.position = pos;
-
-            StartCoroutine(Move());
+            
+			Reset();
         }
+
         public void Reset()
         {
-            GetComponent<MeshRenderer>().enabled = false;
+			gameStarted = false;
+
+            GetComponent<SpriteRenderer>().enabled = false;
 
             transform.position = firstPosition;
 
             StopAllCoroutines();
-            StartCoroutine(Move());
+            StartCoroutine(Spawn());
         }
 
         private void Awake()
         {
             Instance = this;
-        }
+        }		        
 
-        /// <summary>
-        /// This method checks if there isn't obstacle on right.
-        /// If yes, Enemy will move forward.
-        /// If not, Enemy will move right.
-        /// </summary>
-        private bool CanMoveRight()
-        {
-            return !Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z),
-                new Vector3(1, 0, 0), 
-                1, 
-                LayerMask.GetMask("Obstacle"));
-        }
+		private IEnumerator Spawn()
+		{
+			yield return new WaitForSeconds(spawnTime);
+			
+			GetComponent<SpriteRenderer>().enabled = true;
+			gameStarted = true;
 
-        private IEnumerator Move()
-        {
-            yield return new WaitForSeconds(3);
-
-            GetComponent<MeshRenderer>().enabled = true;
-            gameStarted = true;
-
-            while (true)
-            {
-                if (CanMoveRight())
-                    transform.Translate(new Vector3(1, 0, 0));
-                else
-                    transform.Translate(Vector3.forward);
-                yield return new WaitForSeconds(speed);
-            }
-        }
+			StartCoroutine(Move());
+		}
     }
 }

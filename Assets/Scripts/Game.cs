@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*public struct Rules {
+	bool wallsLethal;
+}*/ // Oh, wait, Unity's inspector can't display structs etc, because it is bad.
+
 public class Game : MonoBehaviour {
 	private static Game zInstance = null;
 
@@ -11,7 +15,27 @@ public class Game : MonoBehaviour {
 	/// <summary>For toggling map visibility</summary>
 	LerpMap lightController;
 
+	/// <summary>For crude, ugly bounds-checking on player movement.</summary>
+	[HideInInspector]
+	public Vector2 mapBoundsMin;
+	
+	/// <summary>For crude, ugly bounds-checking on player movement.</summary>
+	[HideInInspector]
+	public Vector2 mapBoundsMax;
+
+	[HideInInspector]
 	public Assets.BasicMovement player;
+
+	/// <summary>Duration of sonar trail, in seconds.</summary>
+	public float sonarDuration;
+
+	[SerializeField]
+	Transform sonarPrefab;
+
+	[SerializeField]
+	int sonarRange;
+
+	public bool wallsLethal;
 
 	/// <summary>Tiles presumed square, this is their side length (y-extent is disregarded). Descriptive, does not presently resize anything.</summary>
 	float zTileSize = 1.0f;
@@ -53,8 +77,22 @@ public class Game : MonoBehaviour {
 		tombstone = GameObject.Find("Tombstone");
 		winText = GameObject.Find("WinText");
 		B.Assert(player != null && lightController != null && tombstone != null);
+		// ^Could use Resources.Load() here instead, but since both the player and tombstone are unique, we might as well just preplace them in the scene
 
-		// Could use Resources.Load() here instead, but since both the player and tombstone are unique, we might as well just preplace them in the scene
+		StartClock();
+	}
+
+	/// <summary>Returns true if the given position is out of bounds or inside a wall</summary>
+	/// <note>Blocked positions don't necessarily block movement, they might just kill the player character (if wallsLethal).</note>
+	public bool Blocked(Vector2 position) {
+		var p = position - mapBoundsMin;
+		var b = mapBoundsMax - mapBoundsMin;
+
+		return p.x < 0 || p.y < 0 || p.x > b.x || p.y > b.y || Physics2D.Raycast(position, Vector2.zero, 0, LayerMask.GetMask("Obstacle"));	
+	}
+
+	public bool Blocked(Vector3 position) {
+		return Blocked(new Vector2(position.x, position.y));
 	}
 
 	public void Die() {
@@ -112,6 +150,8 @@ public class Game : MonoBehaviour {
 		torchesUsed = 0;
 		player.Reset();
 		lightController.SetDimming(false);
+
+		Assets.Scripts.Enemy.Instance.Reset();
 	}
 	
 	public void StartClock() {
@@ -148,6 +188,13 @@ public class Game : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.L) && !lightController.lightsOn) {
 			++torchesUsed;
 			lightController.SetDimming(false);	
+		}
+
+		// S - sonar
+		if (Input.GetKeyDown(KeyCode.S)) {
+			++torchesUsed;
+			var sonar = Instantiate(sonarPrefab, player.transform.position, Quaternion.identity) as Transform;
+			sonar.GetComponent<Sonar>().range = sonarRange;
 		}
 
 		// R - generate new map

@@ -1,41 +1,41 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &197028
+--- !u!1 &170672
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 458096}
-  - 212: {fileID: 21227220}
-  - 61: {fileID: 6176094}
-  - 114: {fileID: 11450984}
+  - 4: {fileID: 490336}
+  - 212: {fileID: 21245174}
+  - 61: {fileID: 6118646}
+  - 114: {fileID: 11475380}
   m_Layer: 0
-  m_Name: Enemy
-  m_TagString: Enemy
+  m_Name: Sonar
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &458096
+--- !u!4 &490336
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197028}
+  m_GameObject: {fileID: 170672}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.03079581, y: -.449465305, z: 0}
+  m_LocalPosition: {x: 690.5, y: 319.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!61 &6176094
+--- !u!61 &6118646
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197028}
+  m_GameObject: {fileID: 170672}
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -43,26 +43,26 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
---- !u!114 &11450984
+--- !u!114 &11475380
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197028}
+  m_GameObject: {fileID: 170672}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8886445c27da7e46a8b2b0775ad65d1, type: 3}
+  m_Script: {fileID: 11500000, guid: d8c2c1aa262daf74b84f9c8d567e0ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnTime: 3
-  speed: 3
-  gameStarted: 0
---- !u!212 &21227220
+  tileMoveTime: .200000003
+  range: 0
+  trailPrefab: {fileID: 425932, guid: b6a99efc55691ea46bf6ac0f08f315be, type: 2}
+--- !u!212 &21245174
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197028}
+  m_GameObject: {fileID: 170672}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -80,8 +80,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: a21b7c9ea7265b644850fd099e6c33eb, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 21300000, guid: 22496bd7d8b8b8c42ac61bdd7212585f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
@@ -91,19 +91,26 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: spawnTime
-      value: 3
+      value: .00999999978
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: speed
-      value: 3
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_Sprite
+      propertyPath: tileMoveTime
+      value: .200000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: trailPrefab
       value: 
-      objectReference: {fileID: 21300000, guid: a21b7c9ea7265b644850fd099e6c33eb,
-        type: 3}
+      objectReference: {fileID: 425932, guid: b6a99efc55691ea46bf6ac0f08f315be, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 197028}
+  m_RootGameObject: {fileID: 170672}
   m_IsPrefabParent: 1
