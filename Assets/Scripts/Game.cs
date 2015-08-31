@@ -31,7 +31,7 @@ public class Game : MonoBehaviour {
 	private int torchesUsed = 0;
 
 	/// <summary>If false, count up, else count down.</summary>
-	bool useTimer = true;
+	bool useTimer = false;
 
 	GameObject winText;
 

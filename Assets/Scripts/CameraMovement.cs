@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// 8.16.2015
 namespace Assets.Scripts
 {
     public class CameraMovement : MonoBehaviour

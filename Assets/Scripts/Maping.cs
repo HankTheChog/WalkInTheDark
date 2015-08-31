@@ -245,5 +245,7 @@ public class Maping : MonoBehaviour {
 		var playerPos = Game.instance.player.transform.position;
 		playerPos = position + new Vector3(descriptor.startX * tileSize, playerPos.y, descriptor.startZ * tileSize);
 		Game.instance.player.transform.position = playerPos;
+
+        Assets.Scripts.Enemy.Instance.Initiate(playerPos);
 	}
 }
