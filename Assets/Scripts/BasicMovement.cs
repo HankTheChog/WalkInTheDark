@@ -30,6 +30,18 @@ namespace Assets
         [HideInInspector]
         public bool visibleByCamera;
 
+		/// <summary>If false, sprite will use an unlit material, meaning it will be visible even in darkness.</summary>
+		public bool isLit {
+			get {
+				return transform.FindChild("LitSprite").GetComponent<SpriteRenderer>().enabled;
+			}
+
+			set {
+				transform.FindChild("LitSprite").GetComponent<SpriteRenderer>().enabled = value;
+				transform.FindChild("UnlitSprite").GetComponent<SpriteRenderer>().enabled = !value;
+			}
+		}
+
         // Reset the position of the Player.
         public void Reset()
         {
@@ -40,7 +52,7 @@ namespace Assets
 
             if (screenFade)
                 screenFade.Play("UnFadeScreen");
-        }		        
+        }		    
 
         private void Update()
         {

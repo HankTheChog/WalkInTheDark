@@ -21,6 +21,9 @@ public class MapDescriptor {
 
 public class Maping : MonoBehaviour {
 	[SerializeField]
+	Transform edgePrefab;
+
+	[SerializeField]
 	Transform floorPrefab;
 
 	GameObject goal;
@@ -235,11 +238,26 @@ public class Maping : MonoBehaviour {
 		for (var x = 0; x < tiles.GetLength(0); ++x) {
 			for (var y = 0; y < tiles.GetLength(1); ++y) {
 				// Place tile
-				var tileToPlace = wallPrefab;
-				if (tiles[x, y] == TileType.Floor)
-					tileToPlace = floorPrefab;
-
+				var tileToPlace = floorPrefab;
 				var tilePosition = position + new Vector3(x, y) * tileSize;			
+
+				// Wait, is the tile a wall? 
+				if (tiles[x, y] == TileType.Wall) {
+					// Yes. Find edges, place edge sprites on them
+					tileToPlace = wallPrefab;
+					if ((x > 0) && (tiles[x - 1, y] == TileType.Floor)) {
+						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 180));
+					}
+					if ((y > 0) && (tiles[x, y - 1] == TileType.Floor)) {
+						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 270));
+					}
+					if ((x < tiles.GetLength(0) - 1) && (tiles[x + 1, y] == TileType.Floor)) {
+						Instantiate(edgePrefab, tilePosition, Quaternion.identity);
+					}
+					if ((y < tiles.GetLength(1) - 1) && (tiles[x, y + 1] == TileType.Floor)) {
+						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 90));
+					}
+				}
 
 				var tile = Instantiate(tileToPlace, tilePosition, Quaternion.identity) as Transform;
 				tile.parent = mapContainer;

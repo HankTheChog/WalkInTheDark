@@ -206,6 +206,11 @@ public class Game : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.T)) {
 			useTimer = !useTimer;
 		}
+
+		// V - toggle player visibility
+		if (Input.GetKeyDown(KeyCode.V)) {
+			player.isLit = !player.isLit;
+		}
 	}
 
 	public void Win() {

@@ -2,7 +2,8 @@ RUNTIME INTERFACE
 L - use torch
 R - generate new map
 T - switch between clock and timer
-S - use sonar.
+S - use sonar
+V - toggle player always visible
 
 CHANGING SCENE SETTINGS
 To set the light fadeout speed, tweak "Over Time Ex" on the Directional Light object.
