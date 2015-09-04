@@ -4,6 +4,7 @@ R - generate new map
 T - switch between clock and timer
 S - use sonar
 V - toggle player always visible
+Keypad 2, 4, 6, 8: change map size
 
 CHANGING SCENE SETTINGS
 To set the light fadeout speed, tweak "Over Time Ex" on the Directional Light object.

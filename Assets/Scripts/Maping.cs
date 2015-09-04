@@ -31,10 +31,8 @@ public class Maping : MonoBehaviour {
 	[SerializeField]
 	Transform gridPrefab;
 		
-	[SerializeField]
-	int numTilesX;
-	[SerializeField]
-	int numTilesY;
+	public int numTilesX;
+	public int numTilesY;
 
 	[SerializeField]
 	Transform wallPrefab;
@@ -246,16 +244,20 @@ public class Maping : MonoBehaviour {
 					// Yes. Find edges, place edge sprites on them
 					tileToPlace = wallPrefab;
 					if ((x > 0) && (tiles[x - 1, y] == TileType.Floor)) {
-						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 180));
+						var edge = Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 180)) as Transform;
+						edge.parent = mapContainer;
 					}
 					if ((y > 0) && (tiles[x, y - 1] == TileType.Floor)) {
-						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 270));
+						var edge = Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 270)) as Transform;
+						edge.parent = mapContainer;
 					}
 					if ((x < tiles.GetLength(0) - 1) && (tiles[x + 1, y] == TileType.Floor)) {
-						Instantiate(edgePrefab, tilePosition, Quaternion.identity);
+						var edge = Instantiate(edgePrefab, tilePosition, Quaternion.identity) as Transform;
+						edge.parent = mapContainer;
 					}
 					if ((y < tiles.GetLength(1) - 1) && (tiles[x, y + 1] == TileType.Floor)) {
-						Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 90));
+						var edge = Instantiate(edgePrefab, tilePosition, Quaternion.Euler(0, 0, 90)) as Transform;
+						edge.parent = mapContainer;
 					}
 				}
 

@@ -23,6 +23,8 @@ public class Game : MonoBehaviour {
 	[HideInInspector]
 	public Vector2 mapBoundsMax;
 
+	Maping mapper;
+
 	[HideInInspector]
 	public Assets.BasicMovement player;
 
@@ -73,6 +75,7 @@ public class Game : MonoBehaviour {
 		// Find objects in scene, init references
 		failText = GameObject.Find("FailText");
 		lightController = FindObjectOfType<LerpMap>(); // assume unique
+		mapper = FindObjectOfType<Maping>();
 		player = GameObject.Find("Player").GetComponent<Assets.BasicMovement>();
 		tombstone = GameObject.Find("Tombstone");
 		winText = GameObject.Find("WinText");
@@ -108,7 +111,7 @@ public class Game : MonoBehaviour {
 
 	void NextStage() {
 		// Generate new map, resete everything. This is a bit kludgy.
-		FindObjectOfType<Maping>().GenerateMap();
+		mapper.GenerateMap();
 
 		bestWinTime = -1;
 		tombstone.GetComponent<MeshRenderer>().enabled = false;
@@ -210,6 +213,30 @@ public class Game : MonoBehaviour {
 		// V - toggle player visibility
 		if (Input.GetKeyDown(KeyCode.V)) {
 			player.isLit = !player.isLit;
+		}
+
+		// Keypad 2, 4, 6, 8 - change map size
+		var newX = mapper.numTilesX;
+		var newY = mapper.numTilesY;
+		if (Input.GetKeyDown(KeyCode.Keypad2)) {
+			newY -= 1;
+		}
+		if (Input.GetKeyDown(KeyCode.Keypad4)) {
+			newX -= 1;
+		}
+		if (Input.GetKeyDown(KeyCode.Keypad6)) {
+			newX += 1;
+		}
+		if (Input.GetKeyDown(KeyCode.Keypad8)) {
+			newY += 1;
+		}
+		newX = Mathf.Max(0, newX);
+		newY = Mathf.Max(0, newY);
+		if ((newX != mapper.numTilesX) || (newY != mapper.numTilesY)) {
+			// Resizing
+			mapper.numTilesX = newX;
+			mapper.numTilesY = newY;
+			NextStage();			
 		}
 	}
 
