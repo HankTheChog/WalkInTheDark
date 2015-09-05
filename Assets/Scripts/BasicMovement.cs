@@ -42,6 +42,8 @@ namespace Assets
 			}
 		}
 
+        private bool gameStarted;
+
         // Reset the position of the Player.
         public void Reset()
         {
@@ -50,8 +52,11 @@ namespace Assets
             moveStartTime = -1;
             currentTile = transform.position;
 
-            if (screenFade)
+            if (screenFade && gameStarted)
                 screenFade.Play("UnFadeScreen");
+
+            if (!gameStarted)
+                gameStarted = true;
         }		    
 
         private void Update()

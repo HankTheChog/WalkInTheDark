@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.03079581, y: -.449465305, z: 0}
+  m_LocalPosition: {x: -1.21716523, y: -.0426499695, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -54,8 +54,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8886445c27da7e46a8b2b0775ad65d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnTime: 3
-  speed: 3
+  tileMoveTime: .899999976
+  spawnTime: 1.79999995
   gameStarted: 0
 --- !u!212 &21227220
 SpriteRenderer:
